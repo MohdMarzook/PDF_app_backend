@@ -8,6 +8,8 @@ import com.marzook.pdfbackend.service.PdfService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,13 +51,19 @@ public class HomeController {
 
         String userId;
         if (tempUserId == null) {
-                userId = UUID.randomUUID().toString();
+            userId = UUID.randomUUID().toString();
 
-            Cookie cookie = new Cookie("userId", userId);
-            cookie.setPath("/");
-            cookie.setMaxAge((int) TimeUnit.DAYS.toSeconds(30));
-            cookie.setHttpOnly(true);
-            response.addCookie(cookie);
+            ResponseCookie cookie = ResponseCookie.from("userId", userId)
+                    .path("/")
+                    .secure(true)
+                    .maxAge(TimeUnit.DAYS.toSeconds(30))
+                    .httpOnly(true)
+                    .partitioned(true) // <-- Here is the new attribute
+                    .build();
+
+            ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                    .body("got profile!");
         }
         else{
             userId = tempUserId;
