@@ -58,6 +58,7 @@ public class HomeController {
                     .httpOnly(true) // Prevent access from JavaScript
                     .maxAge(TimeUnit.DAYS.toSeconds(30)) // Expires in 30 days
                     .partitioned(true) // Necessary for third-party contexts
+                    .sameSite("None")
                     .build();
 
             // Return the new ID in the body AND the cookie in the header
