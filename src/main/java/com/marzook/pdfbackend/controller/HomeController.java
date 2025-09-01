@@ -45,14 +45,14 @@ public class HomeController {
 
     @GetMapping("/getprofile")
     public ResponseEntity<String> getProfile(
-            @CookieValue(name = "userId", required = false) String userIdCookie
+            @CookieValue(name = "userid", required = false) String useridCookie
     ) {
         // If the cookie doesn't exist, create a new one.
-        if (userIdCookie == null) {
+        if (useridCookie == null) {
             String newUserId = UUID.randomUUID().toString();
 
             // Build the secure cookie
-            ResponseCookie cookie = ResponseCookie.from("userId", newUserId)
+            ResponseCookie cookie = ResponseCookie.from("userid", newUserId)
                     .path("/")
                     .secure(true) // Only send over HTTPS
                     .httpOnly(true) // Prevent access from JavaScript
@@ -68,17 +68,17 @@ public class HomeController {
         }
 
         // If the cookie already exists, just return its value.
-        return ResponseEntity.ok(userIdCookie);
+        return ResponseEntity.ok(useridCookie);
     }
 
     @PostMapping("/upload")
     public ResponseEntity<Map<String, String>> upload(
-            @CookieValue(name = "userId", required = true) String userId,
+            @CookieValue(name = "userid", required = true) String userid,
             @RequestParam("from_language")  String from_language,
             @RequestParam("to_language") String to_language,
             @RequestParam("pdf") MultipartFile file
     ) {
-        System.out.println(userId);
+        System.out.println(userid);
         System.out.println(from_language);
         System.out.println(to_language);
         if(file.isEmpty()){
@@ -89,7 +89,7 @@ public class HomeController {
 //           pdf key
             PdfFileService.response data = pdfFileService.UploadPdfFile(file);
             // updating the db
-            String pdfId  = pdfService.updatePdfDetails(userId, from_language, to_language, data.pdf_key());
+            String pdfId  = pdfService.updatePdfDetails(userid, from_language, to_language, data.pdf_key());
             if (messageService.sendMessage(data.pdf_key(), from_language, to_language))
                 return ResponseEntity.ok(Map.of("success", "true", "statusId", pdfId));
             else
@@ -110,10 +110,10 @@ public class HomeController {
 
     @GetMapping("/status/{statusid}")
     public ResponseEntity<Map<String, String>> status(
-            @CookieValue(value = "userId" , required = true) String userId,
+            @CookieValue(value = "userid" , required = true) String userid,
             @PathVariable("statusid") UUID statusId
     ){
-        Map<String,String> data = pdfService.checkPdfStatus(userId, statusId);
+        Map<String,String> data = pdfService.checkPdfStatus(userid, statusId);
         return ResponseEntity.ok(data);
     }
 

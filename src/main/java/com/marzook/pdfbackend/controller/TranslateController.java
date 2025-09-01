@@ -28,11 +28,11 @@ public class TranslateController {
 
     @GetMapping("pdf/{pdfId}")
     public ResponseEntity<Map<String, String>> translate(
-            @CookieValue(value = "userId" , required = true) String userId,
+            @CookieValue(value = "userid" , required = true) String userid,
             @PathVariable("pdfId") String pdfId
     ){
 
-        Pdf pdfData = pdfService.getPdfDetails(userId, pdfId);
+        Pdf pdfData = pdfService.getPdfDetails(userid, pdfId);
         if(pdfData == null){
             return ResponseEntity.badRequest().body(Map.of("success", "false", "message","Unauthorized access not allowed"));
         }
@@ -53,11 +53,11 @@ public class TranslateController {
 
     @GetMapping("/html/{pdfId}")
     public ResponseEntity<Map<String, String>> translateHtml(
-            @CookieValue(value = "userId" , required = true) String userId,
+            @CookieValue(value = "userid" , required = true) String userid,
             @PathVariable("pdfId") String pdfId
     ){
         Map<String, String> response = new HashMap<>();
-        Pdf pdfData = pdfService.getPdfDetails(userId, pdfId);
+        Pdf pdfData = pdfService.getPdfDetails(userid, pdfId);
         if(pdfData == null){
             return ResponseEntity.badRequest().body(Map.of("success", "false", "message","Unauthorized access not allowed"));
         }
