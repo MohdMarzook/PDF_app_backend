@@ -45,30 +45,29 @@ public class HomeController {
 
     @GetMapping("/getprofile")
     public ResponseEntity<String> getProfile(
-            @CookieValue(name = "userId", required = false) String tempUserId,
-            HttpServletResponse response
-    ){
+            @CookieValue(name = "userId", required = false) String userIdCookie
+    ) {
+        // If the cookie doesn't exist, create a new one.
+        if (userIdCookie == null) {
+            String newUserId = UUID.randomUUID().toString();
 
-        String userId;
-        if (tempUserId == null) {
-            userId = UUID.randomUUID().toString();
-
-            ResponseCookie cookie = ResponseCookie.from("userId", userId)
+            // Build the secure cookie
+            ResponseCookie cookie = ResponseCookie.from("userId", newUserId)
                     .path("/")
-                    .secure(true)
-                    .maxAge(TimeUnit.DAYS.toSeconds(30))
-                    .httpOnly(true)
-                    .partitioned(true) // <-- Here is the new attribute
+                    .secure(true) // Only send over HTTPS
+                    .httpOnly(true) // Prevent access from JavaScript
+                    .maxAge(TimeUnit.DAYS.toSeconds(30)) // Expires in 30 days
+                    .partitioned(true) // Necessary for third-party contexts
                     .build();
 
-            ResponseEntity.ok()
+            // Return the new ID in the body AND the cookie in the header
+            return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                    .body("got profile!");
+                    .body(newUserId);
         }
-        else{
-            userId = tempUserId;
-        }
-        return ResponseEntity.ok(userId);
+
+        // If the cookie already exists, just return its value.
+        return ResponseEntity.ok(userIdCookie);
     }
 
     @PostMapping("/upload")
