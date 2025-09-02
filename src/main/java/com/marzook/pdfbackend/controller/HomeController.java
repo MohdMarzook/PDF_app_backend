@@ -121,5 +121,10 @@ public class HomeController {
         return ResponseEntity.ok(Map.of("status", pdfService.db_status()));
     }
 
+    @GetMapping("/health")
+    public ResponseEntity<Map<String , String>> render_health_cheack(){
+        return ResponseEntity.ok(Map.of("health", "good"));
+    }
+
 }
 
