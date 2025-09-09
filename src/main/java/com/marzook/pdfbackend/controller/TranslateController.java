@@ -39,6 +39,7 @@ public class TranslateController {
         return ResponseEntity.ok(Map.of("list", translatedPdfs.toString()));
     }
 
+
     @GetMapping("pdf/{pdfId}")
     public ResponseEntity<Map<String, String>> translate(
             @CookieValue(value = "userid" , required = true) String userid,
