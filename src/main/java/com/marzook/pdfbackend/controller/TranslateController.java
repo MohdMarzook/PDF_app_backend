@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -23,7 +24,19 @@ public class TranslateController {
     TranslateController(PdfService pdfService , PdfFileService pdfFileService, HtmlFileService htmlFileService) {
         this.htmlFileService = htmlFileService;
         this.pdfService = pdfService;
+
         this.pdfFileService = pdfFileService;
+    }
+    @GetMapping("/")
+    public ResponseEntity<Map<String, String>> translatedPdfList(
+            @CookieValue(value = "userid" , required = false) String userid
+    ){
+        if(userid == null){
+            return ResponseEntity.ok(Map.of("status", "false",  "message", "userid not found"));
+        }
+        List<Pdf> translatedPdfs = pdfService.getAllTranslatedPdf(userid);
+        System.out.println(translatedPdfs.toString());
+        return ResponseEntity.ok(Map.of("list", translatedPdfs.toString()));
     }
 
     @GetMapping("pdf/{pdfId}")

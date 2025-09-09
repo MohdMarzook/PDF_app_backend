@@ -33,7 +33,7 @@ public class Pdf {
     @Enumerated(EnumType.STRING)
     private ProcessingStatus status;
     @CreationTimestamp
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     public enum ProcessingStatus{
         QUEUED,

@@ -13,4 +13,8 @@ public interface PdfRepo extends JpaRepository<Pdf,Integer> {
     Pdf findPdfByPdfId(UUID pdfId);
     @Query(value = "SELECT 1", nativeQuery = true)
     Integer healthCheck();
+
+
+    List<Pdf> findAllByUserIdOrderByCreatedAtDesc(String userId);
+    
 }

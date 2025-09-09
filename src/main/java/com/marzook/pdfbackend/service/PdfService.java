@@ -46,7 +46,9 @@ public class PdfService {
             return null;
         return data;
     }
-
+    public List<Pdf> getAllTranslatedPdf(String userid){
+        return pdfRepo.findAllByUserIdOrderByCreatedAtDesc(userid);
+    }
     public int db_status(){
         return pdfRepo.healthCheck();
     }
