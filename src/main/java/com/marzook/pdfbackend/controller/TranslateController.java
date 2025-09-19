@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/translated/")
+@RequestMapping("/translated")
 public class TranslateController {
 
     private final PdfService pdfService;
@@ -27,7 +27,7 @@ public class TranslateController {
 
         this.pdfFileService = pdfFileService;
     }
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<Map<String, String>> translatedPdfList(
             @CookieValue(value = "userid" , required = false) String userid
     ){
@@ -40,7 +40,7 @@ public class TranslateController {
     }
 
 
-    @GetMapping("pdf/{pdfId}")
+    @GetMapping("/pdf/{pdfId}")
     public ResponseEntity<Map<String, String>> translate(
             @CookieValue(value = "userid" , required = true) String userid,
             @PathVariable("pdfId") String pdfId
