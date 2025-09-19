@@ -8,10 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/translated")
@@ -28,15 +25,14 @@ public class TranslateController {
         this.pdfFileService = pdfFileService;
     }
     @GetMapping("")
-    public ResponseEntity<Map<String, String>> translatedPdfList(
+    public ResponseEntity<Map<String , List<Pdf>>> translatedPdfList(
             @CookieValue(value = "userid" , required = false) String userid
     ){
         if(userid == null){
-            return ResponseEntity.ok(Map.of("status", "false",  "message", "userid not found"));
+            return ResponseEntity.notFound().build();
         }
         List<Pdf> translatedPdfs = pdfService.getAllTranslatedPdf(userid);
-        System.out.println(translatedPdfs.toString());
-        return ResponseEntity.ok(Map.of("list", translatedPdfs.toString()));
+        return ResponseEntity.ok(Map.of("pdfs",translatedPdfs));
     }
 
 
