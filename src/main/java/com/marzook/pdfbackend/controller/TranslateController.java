@@ -1,6 +1,7 @@
 package com.marzook.pdfbackend.controller;
 
 import com.marzook.pdfbackend.model.Pdf;
+import com.marzook.pdfbackend.repository.PdfRepo;
 import com.marzook.pdfbackend.service.HtmlFileService;
 import com.marzook.pdfbackend.service.PdfFileService;
 import com.marzook.pdfbackend.service.PdfService;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 @RestController
@@ -17,12 +19,14 @@ public class TranslateController {
     private final PdfService pdfService;
     private final PdfFileService pdfFileService;
     private final HtmlFileService htmlFileService;
+    private final PdfRepo pdfRepo;
 
-    TranslateController(PdfService pdfService , PdfFileService pdfFileService, HtmlFileService htmlFileService) {
+    TranslateController(PdfService pdfService , PdfFileService pdfFileService, HtmlFileService htmlFileService, PdfRepo pdfRepo) {
         this.htmlFileService = htmlFileService;
         this.pdfService = pdfService;
 
         this.pdfFileService = pdfFileService;
+        this.pdfRepo = pdfRepo;
     }
     @GetMapping("")
     public ResponseEntity<Map<String , List<Pdf>>> translatedPdfList(
@@ -59,6 +63,26 @@ public class TranslateController {
 //        response.put("viewOgPdfLink", viewOgPdfLink);
         response.put("originalPdfLink", originalPdfLink);
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("pdf/{pdfId}")
+    public ResponseEntity<Map<String, String>> deletePdf(
+            @CookieValue(value = "userid" , required = true) String userid,
+            @PathVariable("pdfId") String pdfId
+    ){
+        Pdf pdfData = pdfService.getPdfDetails(userid, pdfId);
+        if(pdfData == null){
+            return ResponseEntity.notFound().build();
+        }
+        pdfService.deletePdf(pdfData.getId());
+        String pdfKey = pdfData.getPdf_key();
+        Path path = Paths.get(pdfKey);
+        String htmlKey = path.getFileName().toString().substring(0,pdfKey.length()-4) + "_" + pdfData.getFromLanguage() + "_to_" + pdfData.getToLanguage() + ".html";
+//        System.out.println(htmlKey);
+
+        pdfFileService.deletePdf(pdfKey);
+        htmlFileService.deleteHtml(htmlKey);
+        return  ResponseEntity.ok(Map.of("success", "true"));
     }
 
     @GetMapping("/html/{pdfId}")

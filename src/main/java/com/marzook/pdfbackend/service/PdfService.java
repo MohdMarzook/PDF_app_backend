@@ -53,4 +53,8 @@ public class PdfService {
         return pdfRepo.healthCheck();
     }
 
+    public void deletePdf(long id){
+        pdfRepo.deleteById((int) id);
+    }
+
 }
