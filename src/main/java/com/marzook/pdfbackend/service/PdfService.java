@@ -5,10 +5,7 @@ import com.marzook.pdfbackend.repository.PdfRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class PdfService {
@@ -55,6 +52,12 @@ public class PdfService {
 
     public void deletePdf(long id){
         pdfRepo.deleteById((int) id);
+    }
+
+    public int is_processing(String userid){
+        List<Pdf.ProcessingStatus> activeStatuses = Arrays.asList(Pdf.ProcessingStatus.TRANSLATING, Pdf.ProcessingStatus.QUEUED);
+
+        return pdfRepo.countByUserIdAndStatusIn(userid, activeStatuses);
     }
 
 }

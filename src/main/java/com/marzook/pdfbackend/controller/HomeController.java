@@ -77,11 +77,12 @@ public class HomeController {
             @RequestParam("to_language") String to_language,
             @RequestParam("pdf") MultipartFile file
     ) {
-        System.out.println(userid);
-        System.out.println(from_language);
-        System.out.println(to_language);
+
         if(file.isEmpty()){
            return ResponseEntity.badRequest().body(Map.of("msg","file is empty"));
+        }
+        if(pdfService.is_processing(userid) > 0){
+            return ResponseEntity.badRequest().body(Map.of("TooManyPdf","A PDF is already being translated"));
         }
 
         try{
