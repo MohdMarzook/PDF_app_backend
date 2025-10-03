@@ -45,7 +45,16 @@ public class HomeController {
 
     @GetMapping("/languagelist")
     public List<Language> fromLanguageList() {
-        return languageService.getAllLanguages();
+        List<Language> langlist =  messageService.getlandlist();
+        if(langlist == null || langlist.isEmpty()){
+            langlist = languageService.getAllLanguages();
+            messageService.addlanglist(langlist);
+            System.out.println(langlist.toString());
+            return langlist;
+        }
+        else {
+            return langlist;
+        }
     }
 
     @GetMapping("/getprofile")

@@ -1,20 +1,22 @@
 package com.marzook.pdfbackend.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import java.util.UUID;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import com.marzook.pdfbackend.model.Language;
+
+import java.util.*;
 
 @Service
 public class MessageService {
 
     private final RedisTemplate<String, String> redisTemplate;
+    private final ObjectMapper objectMapper;
 
     public MessageService(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
+        this.objectMapper = new ObjectMapper();
     }
 
     public boolean sendMessage(String pdf_key, String from_language, String to_language) {
@@ -70,5 +72,27 @@ public class MessageService {
 
         // Return the JSON string representation of the message
         return mapper.writeValueAsString(message);
+    }
+
+    public void addlanglist(List<Language> languages){
+        try {
+            String jsonString = objectMapper.writeValueAsString(languages);
+            redisTemplate.opsForValue().set("langlist", jsonString);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public List<Language> getlandlist(){
+        String jsonString = redisTemplate.opsForValue().get("langlist");
+        if( jsonString == null ||  jsonString.isEmpty() ){
+            return new ArrayList<>();
+        }
+        try {
+            return objectMapper.readValue(jsonString, new TypeReference<List<Language>>() {});
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            return new ArrayList<>();
+        }
     }
 }
