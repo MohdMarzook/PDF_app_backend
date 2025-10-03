@@ -49,7 +49,6 @@ public class HomeController {
         if(langlist == null || langlist.isEmpty()){
             langlist = languageService.getAllLanguages();
             messageService.addlanglist(langlist);
-            System.out.println(langlist.toString());
             return langlist;
         }
         else {
