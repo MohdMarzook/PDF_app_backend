@@ -38,6 +38,11 @@ public class HomeController {
         this.messageService = messageService;
     }
 
+    @GetMapping("/loaderio-699bdedb8ba85c8f9a2208ae40ac1a70")
+    public String Test() {
+        return "loaderio-699bdedb8ba85c8f9a2208ae40ac1a70";
+    }
+
     @GetMapping("/languagelist")
     public List<Language> fromLanguageList() {
         return languageService.getAllLanguages();
