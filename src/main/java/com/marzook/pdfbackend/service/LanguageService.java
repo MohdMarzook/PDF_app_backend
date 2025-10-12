@@ -3,6 +3,7 @@ package com.marzook.pdfbackend.service;
 import com.marzook.pdfbackend.model.Language;
 import com.marzook.pdfbackend.repository.LanguageRepo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class LanguageService {
         this.languageRepo = languageRepo;
     }
 
+    @Transactional(readOnly = true)
     public List<Language> getAllLanguages(){
         return languageRepo.findAll();
     }
